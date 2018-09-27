@@ -19,6 +19,17 @@
         android:id="@+id/result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"/>
+        android:visibility="invisible"
+        android:text=""/>
+
+    <ImageView
+        android:id="@+id/checkbox"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_margin="4dp"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/asl_checkable_checkbox" />
 
 </LinearLayout>

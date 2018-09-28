@@ -7,11 +7,20 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
+import android.telephony.TelephonyManager
+import android.util.Log
 import android.view.View
+import com.android.internal.telephony.ITelephony
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
+import android.widget.Toast
+import java.lang.reflect.AccessibleObject.setAccessible
+import android.support.v4.content.ContextCompat.getSystemService
+
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var receiver: PhonecallReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +42,9 @@ class MainActivity : AppCompatActivity() {
 
         val stateSet = intArrayOf(android.R.attr.state_checked)
         checkbox.visibility = View.VISIBLE
+        result.visibility = View.VISIBLE
         checkbox.setImageState(stateSet, true)
+        rejectCall(this)
     }
 
     override fun onStart() {
@@ -56,6 +67,23 @@ class MainActivity : AppCompatActivity() {
         override fun onIncomingCallStarted(ctx: Context, number: String, start: Date) {
             mainActivity.validate(number)
         }
+    }
+
+    private fun rejectCall(context: Context) {
+        val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        try {
+            val m = tm.javaClass.getDeclaredMethod("getITelephony")
+
+            m.isAccessible = true
+            val telephonyService = m.invoke(tm) as ITelephony
+
+            telephonyService.endCall()
+            Toast.makeText(context, "Ending the call", Toast.LENGTH_SHORT).show()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
     }
 
 }
